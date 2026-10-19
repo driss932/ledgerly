@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  pull_request:
+  workflow_call: # reused by deploy.yml so nothing deploys without passing tests
+
+permissions:
+  contents: read
+
+jobs:
+  python:
+    name: Lint and test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements-dev.txt
+
+      - name: Lint
+        run: ruff check .
+
+      - name: Test
+        run: pytest --cov=app --cov-report=term-missing
+
+  terraform:
+    name: Terraform checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.10.5"
+
+      - name: Format
+        run: terraform fmt -check -recursive infra
+
+      - name: Validate
+        working-directory: infra
+        run: |
+          terraform init -backend=false -input=false
+          terraform validate

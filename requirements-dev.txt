@@ -1,0 +1,7 @@
+# boto3 is already included in the AWS Lambda Python runtime, so the
+# deployed functions have no third-party dependencies.
+boto3>=1.35
+moto[dynamodb,sns]>=5.0
+pytest>=8.0
+pytest-cov>=5.0
+ruff>=0.6
