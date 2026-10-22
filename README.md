@@ -36,6 +36,23 @@ flowchart LR
 | Observability | CloudWatch logs, alarms, dashboard, Embedded Metric Format, X-Ray |
 | Delivery | Terraform, S3 remote state with locking, GitHub Actions, OIDC |
 
+## Screenshots
+
+**CI/CD pipeline: lint, 37 tests and Terraform checks, then deploy to AWS via OIDC**
+<img width="1097" height="680" alt="Screenshot 2026-10-22 at 16 40 00" src="https://github.com/user-attachments/assets/3be6915f-4af4-4b7f-a690-40c43af1f067" />
+
+
+**Live demo against the deployed API: retry not double-charged, theft blocked (404), overdraft blocked**
+<img width="1330" height="900" alt="Screenshot 2026-10-22 at 16 47 26" src="https://github.com/user-attachments/assets/d523e47e-48ce-4f9f-974c-1ce532bcaf90" />
+
+
+**Fraud alert email, triggered asynchronously from the DynamoDB Stream**
+<img width="642" height="278" alt="fraud-alert-email" src="https://github.com/user-attachments/assets/0c7e63fc-bdd9-4dd7-b88c-03b5e485ad0c" />
+
+
+**CloudWatch dashboard: API traffic, latency, Lambda errors and fraud flags**
+<img width="1409" height="760" alt="Screenshot 2026-10-22 at 16 54 06" src="https://github.com/user-attachments/assets/bde16117-269a-47c2-b0e0-b08c6e225f9d" />
+
 ## Design decisions (the interview talking points)
 
 **Money is an integer in minor units.** `amount: 1050` means 10.50. Floats can't represent
