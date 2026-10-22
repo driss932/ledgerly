@@ -31,6 +31,21 @@ variable "github_repo" {
   default     = "ledgerly"
 }
 
+variable "github_owner_id" {
+  description = "Numeric GitHub user ID"
+  type        = string
+}
+
+variable "github_repo_id" {
+  description = "Numeric GitHub repository ID"
+  type        = string
+}
+
+# GitHub's OIDC subject for new repos (since July 2026) includes immutable IDs.
+locals {
+  github_subject = "repo:${var.github_owner}@${var.github_owner_id}/${var.github_repo}@${var.github_repo_id}"
+}
+
 provider "aws" {
   region = var.region
 }
@@ -106,8 +121,8 @@ resource "aws_iam_role" "github_deploy" {
         }
         StringLike = {
           "token.actions.githubusercontent.com:sub" = [
-            "repo:${var.github_owner}/${var.github_repo}:environment:dev",
-            "repo:${var.github_owner}/${var.github_repo}:environment:prod",
+            "${local.github_subject}:environment:dev",
+            "${local.github_subject}:environment:prod",
           ]
         }
       }
