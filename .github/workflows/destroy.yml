@@ -1,0 +1,60 @@
+name: Destroy
+
+# Manual teardown, so the environment costs nothing when you're not demoing it.
+# Redeploy any time with Actions -> Deploy -> Run workflow.
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Environment to destroy
+        type: choice
+        options: [dev, prod]
+        default: dev
+      confirm:
+        description: Type "destroy" to confirm
+        type: string
+        required: true
+
+permissions:
+  id-token: write
+  contents: read
+
+# Same group as deploy.yml, so a destroy never runs at the same time as a deploy.
+concurrency:
+  group: deploy-${{ inputs.environment }}
+  cancel-in-progress: false
+
+jobs:
+  destroy:
+    if: inputs.confirm == 'destroy'
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    env:
+      TF_VAR_environment: ${{ inputs.environment }}
+      TF_VAR_alert_email: ${{ vars.ALERT_EMAIL }}
+    defaults:
+      run:
+        working-directory: infra
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.10.5"
+
+      - name: Authenticate to AWS (OIDC, no stored keys)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: eu-west-2
+
+      - name: Terraform init
+        run: |
+          terraform init -input=false \
+            -backend-config="bucket=${{ vars.TF_STATE_BUCKET }}" \
+            -backend-config="key=ledgerly/${TF_VAR_environment}.tfstate" \
+            -backend-config="region=eu-west-2" \
+            -backend-config="use_lockfile=true"
+
+      - name: Terraform destroy
+        run: terraform destroy -input=false -auto-approve
