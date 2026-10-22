@@ -15,3 +15,4 @@ tfplan
 infra/build/
 *.tfvars
 crash.log
+.DS_Store
