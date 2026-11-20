@@ -243,17 +243,6 @@ scripts/demo.sh     End-to-end demo against a deployed environment
 - Security scanning in CI (Checkov or tfsec) and Dependabot
 - A small React frontend on S3 + CloudFront
 
-## Questions I can answer about this project
 
-Use these to check your understanding before an interview:
 
-1. Why integers instead of floats for money?
-2. What would go wrong if the transfer read the balance, checked it in Python, then wrote it?
-3. What exactly does the idempotency key protect against? What if two retries arrive at the same time?
-4. Why read the DynamoDB Stream instead of publishing to SNS from the transfer Lambda?
-5. What happens when the fraud Lambda fails? Walk through retries, bisecting and the DLQ.
-6. Why does someone else's account return 404 instead of 403?
-7. How does GitHub Actions get into AWS without keys? What stops another repo using the role?
-8. Why separate IAM roles per Lambda?
-9. Why DynamoDB here rather than RDS? When would you choose RDS for a bank?
-10. Why is the ops SNS topic not encrypted when the fraud one is?
+
